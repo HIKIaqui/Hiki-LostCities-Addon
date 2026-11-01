@@ -1,0 +1,69 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.107'
+}
+
+group = 'dev.hiki'
+version = mod_version
+base.archivesName = 'hiki-lostcities-addon'
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    exclusiveContent {
+        forRepository { maven { url = 'https://cursemaven.com' } }
+        filter { includeGroup 'curse.maven' }
+    }
+}
+
+neoForge {
+    version = neoforge_version
+    runs {
+        client {
+            client()
+            systemProperty 'mixin.debug.verbose', 'true'
+            systemProperty 'mixin.debug.countInjections', 'true'
+        }
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'mixin.debug.countInjections', 'true'
+        }
+    }
+    mods {
+        hiki_lostcities {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    // JAR oficial. É uma dependência externa; não é copiado para o addon.
+    implementation 'curse.maven:the-lost-cities-269024:9026865'
+    // NeoForge 21.1.172 já fornece o MixinExtras 0.4.1 em runtime.
+    compileOnly 'io.github.llamalad7:mixinextras-common:0.4.1'
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.ow2.asm:asm-tree:9.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand(version: project.version)
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

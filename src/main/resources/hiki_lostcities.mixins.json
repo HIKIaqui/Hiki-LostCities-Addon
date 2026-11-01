@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.7",
+  "package": "dev.hiki.lostcities.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ChunkFixerInvoker",
+    "LostCityTerrainFeatureMixin",
+    "ChunkPlannerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
